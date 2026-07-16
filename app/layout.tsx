@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getPublicEnv } from '@/lib/env';
+import { getPublicEnv, getServerEnv } from '@/lib/env';
 import { Header } from '@/components/layout/Header';
 import { CartLiveRegion } from '@/components/cart/CartLiveRegion';
 import { CartDrawer } from '@/components/cart/CartDrawer';
@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }): React.ReactElement {
+  const { storeUrl } = getServerEnv();
+
   return (
     <html lang="en">
       <body>
@@ -25,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
         <Header />
         <main id="main-content">{children}</main>
         <CartLiveRegion />
-        <CartDrawer />
+        <CartDrawer storeBaseUrl={storeUrl} />
       </body>
     </html>
   );

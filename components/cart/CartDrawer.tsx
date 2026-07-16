@@ -7,11 +7,16 @@ import { useCartStore, useCartHydrated } from '@/lib/cart/store';
 import { getSubtotal } from '@/lib/cart/selectors';
 import { formatPrice } from '@/lib/format';
 import { CartLineItem } from '@/components/cart/CartLineItem';
+import { CheckoutButton } from '@/components/cart/CheckoutButton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 
+interface CartDrawerProps {
+  storeBaseUrl: string;
+}
+
 /** Right-side cart drawer: focus-trapped while open, closes on Esc, returns focus to the trigger. */
-export function CartDrawer(): ReactElement | null {
+export function CartDrawer({ storeBaseUrl }: CartDrawerProps): ReactElement | null {
   const isOpen = useCartStore((state) => state.isDrawerOpen);
   const closeDrawer = useCartStore((state) => state.closeDrawer);
   const items = useCartStore((state) => state.items);
@@ -114,10 +119,13 @@ export function CartDrawer(): ReactElement | null {
               <p className="mt-1 text-xs text-fg-muted">
                 Shipping and taxes are calculated at checkout.
               </p>
+              <div className="mt-4">
+                <CheckoutButton storeBaseUrl={storeBaseUrl} />
+              </div>
               <Link
                 href="/cart"
                 onClick={closeDrawer}
-                className="mt-4 block rounded-md border border-border px-4 py-2 text-center text-sm
+                className="mt-2 block rounded-md border border-border px-4 py-2 text-center text-sm
                   font-semibold text-fg hover:bg-surface-2"
               >
                 View cart
