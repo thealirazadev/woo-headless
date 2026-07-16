@@ -43,7 +43,8 @@ export function Button(props: ButtonProps): ReactElement {
     .join(' ');
 
   if (props.href !== undefined) {
-    const { href, variant: _v, size: _s, className: _c, ...linkProps } = props;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { href, variant: _variant, size: _size, className: _className, ...linkProps } = props;
     return (
       <Link href={href} className={classes} {...linkProps}>
         {props.children}
@@ -51,7 +52,8 @@ export function Button(props: ButtonProps): ReactElement {
     );
   }
 
-  const { variant: _variant, size: _size, className: _className, ...buttonProps } = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { variant: _btnVariant, size: _btnSize, className: _btnClassName, ...buttonProps } = props;
   return (
     <button className={classes} {...buttonProps}>
       {props.children}
