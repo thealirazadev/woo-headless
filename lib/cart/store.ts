@@ -33,6 +33,26 @@ function clampQuantity(quantity: number): number {
   return Number.isFinite(rounded) && rounded > 0 ? rounded : 1;
 }
 
+/**
+ * `localStorage` does not exist during server rendering. `createJSONStorage`'s getter runs
+ * eagerly, and letting it throw makes zustand's persist middleware skip attaching `.persist`
+ * entirely (breaking `useCartHydrated` at prerender time) - so fall back to a no-op storage
+ * on the server and only touch the real `localStorage` in the browser.
+ */
+function getCartStorage(): Storage {
+  if (typeof window === 'undefined') {
+    return {
+      length: 0,
+      clear: () => {},
+      key: () => null,
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+    };
+  }
+  return window.localStorage;
+}
+
 export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
@@ -81,7 +101,7 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: CART_STORAGE_KEY,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(getCartStorage),
       partialize: (state) => ({ items: state.items }),
     },
   ),

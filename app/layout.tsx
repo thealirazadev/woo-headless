@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { getPublicEnv } from '@/lib/env';
+import { Header } from '@/components/layout/Header';
+import { CartLiveRegion } from '@/components/cart/CartLiveRegion';
 import './globals.css';
 
 const { storeName } = getPublicEnv();
@@ -19,7 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
         >
           Skip to content
         </a>
+        <Header />
         <main id="main-content">{children}</main>
+        <CartLiveRegion />
       </body>
     </html>
   );
