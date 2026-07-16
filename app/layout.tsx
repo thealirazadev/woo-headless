@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getPublicEnv, getServerEnv } from '@/lib/env';
 import { Header } from '@/components/layout/Header';
+import { ThemeScript } from '@/components/layout/ThemeScript';
 import { CartLiveRegion } from '@/components/cart/CartLiveRegion';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import './globals.css';
@@ -17,6 +18,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
 
   return (
     <html lang="en">
+      <head>
+        <ThemeScript />
+      </head>
       <body>
         <a
           href="#main-content"

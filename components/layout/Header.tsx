@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { ReactElement } from 'react';
 import { getPublicEnv } from '@/lib/env';
 import { CartButton } from '@/components/cart/CartButton';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 const NAV_LINK_CLASSES =
   'text-sm font-medium text-fg-muted hover:text-fg focus-visible:outline focus-visible:outline-2 ' +
@@ -29,7 +30,10 @@ export function Header(): ReactElement {
             Categories
           </Link>
         </nav>
-        <CartButton />
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <CartButton />
+        </div>
       </div>
     </header>
   );
