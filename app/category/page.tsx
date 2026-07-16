@@ -4,6 +4,11 @@ import { getCategories } from '@/lib/woocommerce/categories';
 import { EmptyState } from '@/components/ui/EmptyState';
 
 export const revalidate = 60;
+// No dynamic segment or search params on this route, so Next would otherwise try to
+// statically prerender it at build time (requiring the store to be reachable during
+// `next build`). Force on-demand rendering; the underlying fetch still caches per
+// `revalidate` above.
+export const dynamic = 'force-dynamic';
 
 /** Categories index. Empty categories are hidden by `getCategories()`'s default. */
 export default async function CategoriesPage(): Promise<ReactElement> {
