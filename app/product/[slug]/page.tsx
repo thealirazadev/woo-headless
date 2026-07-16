@@ -68,7 +68,14 @@ export default async function ProductPage({ params }: ProductPageProps): Promise
           dangerouslySetInnerHTML={{ __html: product.description }}
         />
         <div>
-          <AddToCartButton disabled={outOfStock} />
+          <AddToCartButton
+            productId={product.id}
+            slug={product.slug}
+            name={product.name}
+            price={product.price}
+            image={image}
+            disabled={outOfStock}
+          />
         </div>
       </div>
     </div>

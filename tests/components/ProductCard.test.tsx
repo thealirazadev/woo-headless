@@ -33,9 +33,15 @@ describe('ProductCard', () => {
     expect(screen.getByRole('link')).toHaveAttribute('href', '/product/widget');
   });
 
-  it('shows an out-of-stock badge when the product is unavailable', () => {
+  it('shows an out-of-stock badge and disables add-to-cart when unavailable', () => {
     render(<ProductCard product={{ ...baseProduct, stockStatus: 'outofstock' }} />);
-    expect(screen.getByText('Out of stock')).toBeInTheDocument();
+    expect(screen.getAllByText('Out of stock')).toHaveLength(2);
+    expect(screen.getByRole('button', { name: 'Out of stock' })).toBeDisabled();
+  });
+
+  it('renders an enabled add-to-cart button when in stock', () => {
+    render(<ProductCard product={baseProduct} />);
+    expect(screen.getByRole('button', { name: 'Add to cart' })).toBeEnabled();
   });
 
   it('clamps long titles to two lines without breaking the card layout', () => {
