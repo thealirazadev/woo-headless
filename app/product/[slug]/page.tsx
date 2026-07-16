@@ -44,7 +44,7 @@ export default async function ProductPage({ params }: ProductPageProps): Promise
   const product = await loadProduct(slug);
   if (!product) notFound();
 
-  const image = product.images[0];
+  const image = product.images[0] ?? { src: '/placeholder-product.svg', alt: product.name };
   const outOfStock = product.stockStatus === 'outofstock';
 
   return (
