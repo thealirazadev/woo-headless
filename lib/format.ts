@@ -12,6 +12,15 @@ const ALLOWED_TAGS = new Set([
 ]);
 
 /**
+ * Only http(s), mailto, and same-site relative links are kept. Checking the
+ * literal prefix (instead of blocking "javascript:") means entity-encoded or
+ * whitespace-obfuscated schemes such as "&#106;avascript:" are rejected too.
+ */
+function isSafeHref(href: string): boolean {
+  return /^(?:https?:\/\/|mailto:|\/(?!\/)|#|\?)/i.test(href);
+}
+
+/**
  * Minimal allowlist-based HTML sanitizer for WooCommerce-supplied fields
  * (description, short_description, price_html). Strips script/style/iframe
  * and any other tag not in ALLOWED_TAGS, plus event-handler attributes and
@@ -37,7 +46,7 @@ export function sanitizeHtml(html: string): string {
     if (tag === 'a') {
       const hrefMatch = /href\s*=\s*"([^"]*)"|href\s*=\s*'([^']*)'/i.exec(attrs);
       const href = hrefMatch ? hrefMatch[1] ?? hrefMatch[2] ?? '' : '';
-      if (href && !/^javascript:/i.test(href.trim())) {
+      if (isSafeHref(href.trim())) {
         safeAttrs = ` href="${href.replace(/"/g, '&quot;')}" rel="noopener noreferrer"`;
       }
     }
