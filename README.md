@@ -60,6 +60,8 @@ Production build:
 npm run build
 ```
 
+The build needs the `WOOCOMMERCE_*` variables from `.env.example` set, even for static pages such as `/_not-found`.
+
 Start the production server (after a build):
 
 ```
