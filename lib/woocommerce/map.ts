@@ -23,6 +23,7 @@ export function mapProduct(raw: WcProduct): Product {
     slug: raw.slug,
     name: raw.name,
     permalink: raw.permalink ?? '',
+    type: raw.type ?? 'simple',
     priceHtml: sanitizeHtml(raw.price_html ?? ''),
     price: raw.price ?? '0',
     regularPrice: raw.regular_price ?? raw.price ?? '0',

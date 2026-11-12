@@ -24,6 +24,7 @@ const products = [
     slug: 'test-widget',
     name: 'Test Widget',
     permalink: `https://127.0.0.1:${PORT}/product/test-widget`,
+    type: 'simple',
     price: '19.99',
     regular_price: '19.99',
     sale_price: '',

@@ -8,6 +8,7 @@ const baseProduct: Product = {
   slug: 'widget',
   name: 'Widget',
   permalink: 'https://store.example.com/product/widget',
+  type: 'simple',
   priceHtml: '',
   price: '9.99',
   regularPrice: '12.99',
@@ -42,6 +43,20 @@ describe('ProductCard', () => {
   it('renders an enabled add-to-cart button when in stock', () => {
     render(<ProductCard product={baseProduct} />);
     expect(screen.getByRole('button', { name: 'Add to cart' })).toBeEnabled();
+  });
+
+  it('disables add-to-cart for a product the store will not sell', () => {
+    render(<ProductCard product={{ ...baseProduct, purchasable: false }} />);
+    expect(screen.getByRole('button', { name: 'Unavailable' })).toBeDisabled();
+  });
+
+  it('links a variable product to the store to choose options instead of adding it', () => {
+    render(<ProductCard product={{ ...baseProduct, type: 'variable' }} />);
+    expect(screen.queryByRole('button', { name: 'Add to cart' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Choose options' })).toHaveAttribute(
+      'href',
+      'https://store.example.com/product/widget',
+    );
   });
 
   it('clamps long titles to two lines without breaking the card layout', () => {
