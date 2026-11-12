@@ -30,6 +30,18 @@ export function Header(): ReactElement {
             Categories
           </Link>
         </nav>
+        <form action="/" role="search">
+          <input
+            type="search"
+            name="q"
+            aria-label="Search products"
+            placeholder="Search products"
+            maxLength={100}
+            className="w-28 rounded-md sm:w-44 border border-border bg-surface px-3 py-1.5 text-sm text-fg
+              placeholder:text-fg-muted focus-visible:outline focus-visible:outline-2
+              focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          />
+        </form>
         <div className="flex items-center gap-1">
           <ThemeToggle />
           <CartButton />
