@@ -20,6 +20,7 @@ const product: Product = {
   slug: 'widget',
   name: 'Widget',
   permalink: 'https://store.example.com/product/widget',
+  type: 'simple',
   priceHtml: '',
   price: '9.99',
   regularPrice: '9.99',

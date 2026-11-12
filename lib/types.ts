@@ -18,6 +18,8 @@ export interface Product {
   slug: string;
   name: string;
   permalink: string;
+  /** WooCommerce product type: simple, variable, grouped, external. */
+  type: string;
   priceHtml: string;
   price: string;
   regularPrice: string;

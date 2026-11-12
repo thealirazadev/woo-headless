@@ -47,6 +47,10 @@ describe('mapProduct', () => {
     expect(product.salePrice).toBeNull();
   });
 
+  it('defaults the product type to simple when absent', () => {
+    expect(mapProduct({ ...baseProduct, type: undefined }).type).toBe('simple');
+  });
+
   it('maps an unrecognized stock status to outofstock', () => {
     const product = mapProduct({ ...baseProduct, stock_status: 'bogus' });
     expect(product.stockStatus).toBe('outofstock');

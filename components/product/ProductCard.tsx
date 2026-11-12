@@ -53,6 +53,8 @@ export function ProductCard({ product }: ProductCardProps): ReactElement {
           price={product.price}
           image={image}
           disabled={outOfStock}
+          purchasable={product.purchasable}
+          optionsUrl={product.type !== 'simple' && product.permalink ? product.permalink : undefined}
         />
       </div>
     </div>
