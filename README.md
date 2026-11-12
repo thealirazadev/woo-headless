@@ -5,10 +5,12 @@ A headless storefront that presents an existing WooCommerce store's catalog thro
 ## Features
 
 - Product listing page with pagination
+- Product search (uses the WooCommerce `search` parameter)
 - Category browsing (list of categories and per-category product listing)
 - Product detail page with gallery image, price, description, and stock status
 - Client-side cart (add, update quantity, remove, view totals) persisted to `localStorage`
-- Checkout handoff that redirects to the WooCommerce store checkout with the cart contents
+- Checkout handoff through WooCommerce's shareable checkout link (`/checkout-link/?products=id:qty,...`), which fills the store cart and opens checkout
+- Variable, grouped, and external products link to the store's product page to choose options; unpurchasable products cannot be added
 - Server-side data fetching with caching / ISR for catalog pages
 - Optimized images via `next/image`
 - Light and dark theme
@@ -28,7 +30,7 @@ A headless storefront that presents an existing WooCommerce store's catalog thro
 ## Prerequisites
 
 - Node.js 20.x or later
-- A running WooCommerce store (WordPress + WooCommerce) reachable over HTTPS
+- A running WooCommerce store (WordPress + WooCommerce) reachable over HTTPS. The checkout handoff needs a WooCommerce version that provides `/checkout-link/` (tested on 11.3).
 - WooCommerce REST API keys (a read-only consumer key and consumer secret), created under WooCommerce > Settings > Advanced > REST API
 - The store must have at least one published product and one category to see meaningful data
 
@@ -76,6 +78,7 @@ Unit and component tests (Vitest):
 
 ```
 npm run test
+npm run test:coverage   # same, with the coverage gate on lib/ (CI runs this)
 ```
 
 End-to-end smoke test (Playwright):
