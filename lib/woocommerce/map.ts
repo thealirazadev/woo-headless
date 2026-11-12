@@ -1,6 +1,6 @@
 import type { Category, Product, StockStatus } from '@/lib/types';
 import type { WcCategory, WcProduct } from '@/lib/woocommerce/types';
-import { sanitizeHtml } from '@/lib/format';
+import { decodeEntities, sanitizeHtml } from '@/lib/format';
 
 const PLACEHOLDER_IMAGE = { src: '/placeholder-product.svg', alt: '' };
 
@@ -14,14 +14,15 @@ function mapStockStatus(status: string | undefined): StockStatus {
 }
 
 export function mapProduct(raw: WcProduct): Product {
+  const name = decodeEntities(raw.name);
   const images = (raw.images ?? [])
     .filter((img) => Boolean(img.src))
-    .map((img) => ({ src: img.src as string, alt: img.alt || raw.name }));
+    .map((img) => ({ src: img.src as string, alt: img.alt || name }));
 
   return {
     id: raw.id,
     slug: raw.slug,
-    name: raw.name,
+    name,
     permalink: raw.permalink ?? '',
     type: raw.type ?? 'simple',
     priceHtml: sanitizeHtml(raw.price_html ?? ''),
@@ -34,17 +35,18 @@ export function mapProduct(raw: WcProduct): Product {
     images: images.length > 0 ? images : [PLACEHOLDER_IMAGE],
     stockStatus: mapStockStatus(raw.stock_status),
     purchasable: raw.purchasable ?? false,
-    categories: (raw.categories ?? []).map((c) => ({ id: c.id, name: c.name, slug: c.slug })),
+    categories: (raw.categories ?? []).map((c) => ({ id: c.id, name: decodeEntities(c.name), slug: c.slug })),
   };
 }
 
 export function mapCategory(raw: WcCategory): Category {
+  const name = decodeEntities(raw.name);
   return {
     id: raw.id,
-    name: raw.name,
+    name,
     slug: raw.slug,
     count: raw.count ?? 0,
-    image: raw.image?.src ? { src: raw.image.src, alt: raw.image.alt || raw.name } : null,
+    image: raw.image?.src ? { src: raw.image.src, alt: raw.image.alt || name } : null,
     parent: raw.parent ?? 0,
   };
 }

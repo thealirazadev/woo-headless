@@ -7,6 +7,7 @@ const baseProduct: WcProduct = {
   slug: 'widget',
   name: 'Widget',
   permalink: 'https://store.example.com/product/widget',
+  type: 'simple',
   price: '9.99',
   regular_price: '12.99',
   sale_price: '9.99',
@@ -47,6 +48,16 @@ describe('mapProduct', () => {
     expect(product.salePrice).toBeNull();
   });
 
+  it('decodes entities in the product and category names', () => {
+    const product = mapProduct({
+      ...baseProduct,
+      name: 'Salt &amp; Pepper',
+      categories: [{ id: 1, name: 'Caf\u00e9 &amp; Bar', slug: 'cafe-bar' }],
+    });
+    expect(product.name).toBe('Salt & Pepper');
+    expect(product.categories[0]?.name).toBe('Caf\u00e9 & Bar');
+  });
+
   it('defaults the product type to simple when absent', () => {
     expect(mapProduct({ ...baseProduct, type: undefined }).type).toBe('simple');
   });
@@ -77,6 +88,11 @@ describe('mapCategory', () => {
       parent: 0,
       image: { src: 'https://store.example.com/cat.jpg', alt: 'Widgets' },
     });
+  });
+
+  it('decodes HTML entities that WordPress stores in names', () => {
+    const category = mapCategory({ ...baseCategory, name: 'Caf\u00e9 &amp; Bar &#8211; &#x2019;s' });
+    expect(category.name).toBe('Caf\u00e9 & Bar \u2013 \u2019s');
   });
 
   it('maps a missing image to null', () => {
