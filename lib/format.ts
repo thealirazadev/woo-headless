@@ -55,3 +55,38 @@ export function sanitizeHtml(html: string): string {
 
   return out;
 }
+
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: ' ',
+  ndash: '–',
+  mdash: '—',
+  lsquo: '‘',
+  rsquo: '’',
+  ldquo: '“',
+  rdquo: '”',
+  hellip: '…',
+};
+
+/**
+ * Decodes HTML entities in plain-text fields. WordPress stores term and product names
+ * entity-encoded ("Caf&eacute; &amp; Bar" comes back as "Café &amp; Bar"), and React
+ * escapes text again, so the shopper would see the raw entity. The result is rendered as
+ * text, never as HTML.
+ */
+export function decodeEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
+    if (entity[0] === '#') {
+      const code =
+        entity[1] === 'x' || entity[1] === 'X'
+          ? parseInt(entity.slice(2), 16)
+          : parseInt(entity.slice(1), 10);
+      return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : match;
+    }
+    return NAMED_ENTITIES[entity.toLowerCase()] ?? match;
+  });
+}
