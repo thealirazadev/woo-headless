@@ -23,4 +23,9 @@ describe('Pagination', () => {
     expect(screen.getByText('Previous')).toHaveAttribute('href', '/?page=1');
     expect(screen.getByText('Next')).toHaveAttribute('href', '/?page=3');
   });
+
+  it('keeps an existing query string, such as a search term', () => {
+    render(<Pagination page={2} totalPages={3} basePath="/?q=red%20shirt" />);
+    expect(screen.getByText('Next')).toHaveAttribute('href', '/?q=red%20shirt&page=3');
+  });
 });

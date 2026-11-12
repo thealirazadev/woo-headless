@@ -13,7 +13,12 @@ const LINK_CLASSES =
   'focus-visible:outline-focus-ring';
 
 /** Prev/next pagination driven by the real `total`/`totalPages` from the WooCommerce response. */
-export function Pagination({ page, totalPages, basePath }: PaginationProps): ReactElement | null {
+export function Pagination({
+  page,
+  totalPages,
+  basePath,
+}: PaginationProps): ReactElement | null {
+  const separator = basePath.includes('?') ? '&' : '?';
   if (totalPages <= 1) return null;
 
   const isFirst = page <= 1;
@@ -24,7 +29,7 @@ export function Pagination({ page, totalPages, basePath }: PaginationProps): Rea
   return (
     <nav aria-label="Pagination" className="mt-8 flex items-center justify-center gap-4">
       <Link
-        href={`${basePath}?page=${prevPage}`}
+        href={`${basePath}${separator}page=${prevPage}`}
         aria-disabled={isFirst}
         className={`${LINK_CLASSES} ${isFirst ? 'pointer-events-none opacity-50' : ''}`}
       >
@@ -34,7 +39,7 @@ export function Pagination({ page, totalPages, basePath }: PaginationProps): Rea
         Page {page} of {totalPages}
       </span>
       <Link
-        href={`${basePath}?page=${nextPage}`}
+        href={`${basePath}${separator}page=${nextPage}`}
         aria-disabled={isLast}
         className={`${LINK_CLASSES} ${isLast ? 'pointer-events-none opacity-50' : ''}`}
       >
