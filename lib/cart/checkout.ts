@@ -1,20 +1,20 @@
 import type { CartItem } from '@/lib/types';
 
 /**
- * Builds the WooCommerce checkout redirect URL from the public store base and the
- * cart contents. Only product ids and quantities are encoded; no consumer key/secret
- * ever appears here (those never leave the server - see lib/env.ts / lib/woocommerce/client.ts).
+ * Builds the WooCommerce checkout handoff URL from the public store base and the cart
+ * contents. Only product ids and quantities are encoded; no consumer key/secret ever
+ * appears here (those never leave the server - see lib/env.ts / lib/woocommerce/client.ts).
  *
- * Encodes items as repeated `add-to-cart[]` / `quantity[]` params, the common convention
- * for adding several products to the WooCommerce session cart in one request. A store
- * without a matching bulk-add handler may need this adjusted - flagged in docs/memory.md
- * as something a human with real store credentials should verify.
+ * Uses WooCommerce's shareable checkout link, `/checkout-link/?products=id:qty,id:qty`,
+ * which fills the cart session and redirects to checkout. Core WooCommerce ignores
+ * `add-to-cart[]` arrays, so that form left the store cart empty (verified on 11.3).
  */
 export function buildCheckoutUrl(storeBaseUrl: string, items: CartItem[]): string {
-  const url = new URL('/checkout', storeBaseUrl);
-  for (const item of items) {
-    url.searchParams.append('add-to-cart[]', String(item.productId));
-    url.searchParams.append('quantity[]', String(item.quantity));
-  }
+  if (items.length === 0) return new URL('/checkout', storeBaseUrl).toString();
+  const url = new URL('/checkout-link/', storeBaseUrl);
+  url.searchParams.set(
+    'products',
+    items.map((item) => `${item.productId}:${item.quantity}`).join(','),
+  );
   return url.toString();
 }
