@@ -14,7 +14,10 @@ interface ProductCardProps {
  * the add-to-cart control is a separate focusable button, not nested inside that link.
  */
 export function ProductCard({ product }: ProductCardProps): ReactElement {
-  const image = product.images[0] ?? { src: '/placeholder-product.svg', alt: product.name };
+  const image = product.images[0] ?? {
+    src: '/placeholder-product.svg',
+    alt: product.name,
+  };
   const outOfStock = product.stockStatus === 'outofstock';
 
   return (
@@ -42,7 +45,12 @@ export function ProductCard({ product }: ProductCardProps): ReactElement {
         </div>
         <div className="flex flex-1 flex-col gap-2 p-4">
           <h3 className="line-clamp-2 text-base font-semibold text-fg">{product.name}</h3>
-          <Price price={product.price} regularPrice={product.regularPrice} onSale={product.onSale} />
+          <Price
+            price={product.price}
+            regularPrice={product.regularPrice}
+            onSale={product.onSale}
+            from={product.type === 'variable'}
+          />
         </div>
       </Link>
       <div className="px-4 pb-4">
@@ -54,7 +62,9 @@ export function ProductCard({ product }: ProductCardProps): ReactElement {
           image={image}
           disabled={outOfStock}
           purchasable={product.purchasable}
-          optionsUrl={product.type !== 'simple' && product.permalink ? product.permalink : undefined}
+          optionsUrl={
+            product.type !== 'simple' && product.permalink ? product.permalink : undefined
+          }
         />
       </div>
     </div>

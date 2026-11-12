@@ -59,6 +59,11 @@ describe('ProductCard', () => {
     );
   });
 
+  it('shows a "From" price for a variable product', () => {
+    render(<ProductCard product={{ ...baseProduct, type: 'variable', price: '60' }} />);
+    expect(screen.getByText('From $60.00')).toBeInTheDocument();
+  });
+
   it('clamps long titles to two lines without breaking the card layout', () => {
     const longTitle = 'A very long product title'.repeat(6);
     render(<ProductCard product={{ ...baseProduct, name: longTitle }} />);
