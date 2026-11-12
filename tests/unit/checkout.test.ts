@@ -10,13 +10,12 @@ const items: CartItem[] = [
 describe('buildCheckoutUrl', () => {
   it('builds a checkout URL under the store base', () => {
     const url = buildCheckoutUrl('https://store.example.com', items);
-    expect(url.startsWith('https://store.example.com/checkout')).toBe(true);
+    expect(url.startsWith('https://store.example.com/checkout-link/')).toBe(true);
   });
 
   it('encodes each item as a product id / quantity pair', () => {
     const url = new URL(buildCheckoutUrl('https://store.example.com', items));
-    expect(url.searchParams.getAll('add-to-cart[]')).toEqual(['1', '2']);
-    expect(url.searchParams.getAll('quantity[]')).toEqual(['2', '1']);
+    expect(url.searchParams.get('products')).toBe('1:2,2:1');
   });
 
   it('produces a bare checkout URL for an empty cart', () => {
