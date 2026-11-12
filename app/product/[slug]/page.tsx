@@ -37,14 +37,19 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   return { title: product ? `${product.name} | ${storeName}` : storeName };
 }
 
-export default async function ProductPage({ params }: ProductPageProps): Promise<ReactElement> {
+export default async function ProductPage({
+  params,
+}: ProductPageProps): Promise<ReactElement> {
   const { slug } = await params;
   if (!isValidSlug(slug)) notFound();
 
   const product = await loadProduct(slug);
   if (!product) notFound();
 
-  const image = product.images[0] ?? { src: '/placeholder-product.svg', alt: product.name };
+  const image = product.images[0] ?? {
+    src: '/placeholder-product.svg',
+    alt: product.name,
+  };
   const outOfStock = product.stockStatus === 'outofstock';
 
   return (
@@ -61,7 +66,12 @@ export default async function ProductPage({ params }: ProductPageProps): Promise
       </div>
       <div className="flex flex-col gap-4">
         <h1 className="text-xl font-semibold text-fg">{product.name}</h1>
-        <Price price={product.price} regularPrice={product.regularPrice} onSale={product.onSale} />
+        <Price
+          price={product.price}
+          regularPrice={product.regularPrice}
+          onSale={product.onSale}
+          from={product.type === 'variable'}
+        />
         <StockBadge status={product.stockStatus} />
         <div
           className="prose prose-sm max-w-none text-fg-muted"
@@ -76,7 +86,11 @@ export default async function ProductPage({ params }: ProductPageProps): Promise
             image={image}
             disabled={outOfStock}
             purchasable={product.purchasable}
-            optionsUrl={product.type !== 'simple' && product.permalink ? product.permalink : undefined}
+            optionsUrl={
+              product.type !== 'simple' && product.permalink
+                ? product.permalink
+                : undefined
+            }
           />
         </div>
       </div>

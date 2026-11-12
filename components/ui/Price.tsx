@@ -5,16 +5,26 @@ interface PriceProps {
   price: string;
   regularPrice?: string;
   onSale?: boolean;
+  /** Show "From" before the price, for products whose price depends on chosen options. */
+  from?: boolean;
   className?: string;
 }
 
 /** Renders the current price, plus a struck-through regular price when the item is on sale. */
-export function Price({ price, regularPrice, onSale, className = '' }: PriceProps): ReactElement {
+export function Price({
+  price,
+  regularPrice,
+  onSale,
+  from = false,
+  className = '',
+}: PriceProps): ReactElement {
   const showRegular = onSale && regularPrice && regularPrice !== price;
 
   return (
     <span className={`inline-flex items-baseline gap-2 ${className}`.trim()}>
-      <span className="text-base font-bold tabular-nums text-fg">{formatPrice(price)}</span>
+      <span className="text-base font-bold tabular-nums text-fg">
+        {from ? `From ${formatPrice(price)}` : formatPrice(price)}
+      </span>
       {showRegular ? (
         <span className="text-sm tabular-nums text-fg-muted line-through">
           {formatPrice(regularPrice)}
