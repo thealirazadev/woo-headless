@@ -19,7 +19,10 @@ export default async function CategoriesPage(): Promise<ReactElement> {
       <h1 className="text-2xl font-bold text-fg">Categories</h1>
       {categories.length === 0 ? (
         <div className="mt-8">
-          <EmptyState heading="No categories yet" message="This store has no product categories." />
+          <EmptyState
+            heading="No categories yet"
+            message="This store has no product categories."
+          />
         </div>
       ) : (
         <ul className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -32,7 +35,7 @@ export default async function CategoriesPage(): Promise<ReactElement> {
                   focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
               >
                 <span className="text-base font-semibold text-fg">{category.name}</span>
-                <span className="text-sm text-fg-muted">{category.count} products</span>
+                <span className="text-sm text-fg-muted">{`${category.count} ${category.count === 1 ? 'product' : 'products'}`}</span>
               </Link>
             </li>
           ))}

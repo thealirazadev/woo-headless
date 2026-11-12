@@ -26,6 +26,14 @@ describe('CategoriesPage', () => {
     expect(screen.getByText('3 products')).toBeInTheDocument();
   });
 
+  it('uses the singular for a category with one product', async () => {
+    vi.mocked(getCategories).mockResolvedValue([
+      { id: 2, name: 'Mugs', slug: 'mugs', count: 1, image: null, parent: 0 },
+    ]);
+    render(await CategoriesPage());
+    expect(screen.getByText('1 product')).toBeInTheDocument();
+  });
+
   it('shows an empty state when there are no categories', async () => {
     vi.mocked(getCategories).mockResolvedValue([]);
     render(await CategoriesPage());
