@@ -29,44 +29,46 @@ Cart store (Zustand) <---> localStorage
 WooCommerce store checkout (payment)
 ```
 
-## Proposed folder / file tree
+## Folder / file tree
 
 ```
 woo-headless/
   app/
     layout.tsx                  Root layout: html/body, theme, header, cart provider mount
     globals.css                 Tailwind directives + base tokens
-    page.tsx                    Home = product listing (server component)
-    loading.tsx                 Listing skeleton
+    (home)/
+      page.tsx                  Home = product listing and search (server component)
+      loading.tsx               Listing skeleton (scoped to home; see decisions.md #11)
     error.tsx                   Route-level error boundary (client)
-    not-found.tsx               Global 404
+    not-found.tsx               Global 404 (noindex metadata)
     category/
       page.tsx                  Categories index (server component)
       [slug]/
+        layout.tsx              Resolves the category before streaming so a miss is a real 404
         page.tsx                Per-category product listing (server component)
         loading.tsx             Category listing skeleton
     product/
       [slug]/
-        page.tsx                Product detail (server component)
+        page.tsx                Product detail (server component, on-demand ISR)
         loading.tsx             Detail skeleton
-        not-found.tsx           Product-specific 404 (optional; falls back to global)
     cart/
       page.tsx                  Full cart page (client component)
   components/
     layout/
-      Header.tsx                Store name, nav, cart button, theme toggle (client where needed)
-      Footer.tsx
+      Header.tsx                Store name, nav, search form, cart button, theme toggle
+      ThemeScript.tsx           Inline script that applies the theme before first paint
       ThemeToggle.tsx           Client component
     product/
       ProductCard.tsx           Server-renderable card (image, name, price, link)
       ProductGrid.tsx           Grid wrapper
-      ProductGallery.tsx        Detail image(s)
       AddToCartButton.tsx       Client component
       StockBadge.tsx
     cart/
       CartButton.tsx            Client: opens drawer, shows item count
       CartDrawer.tsx            Client: cart contents, quantities, totals
       CartLineItem.tsx          Client: single line with quantity controls
+      CartLiveRegion.tsx        Client: screen-reader announcements for cart changes
+      CartPageContent.tsx       Client: full cart page body
       CheckoutButton.tsx        Client: builds redirect and navigates
     ui/
       Button.tsx                Variants + states (hover/focus/disabled/loading)
@@ -77,7 +79,7 @@ woo-headless/
   lib/
     woocommerce/
       client.ts                 Low-level fetch wrapper (auth, base URL, timeout, error mapping)
-      products.ts               getProducts, getProductBySlug, getProductById
+      products.ts               getProducts, getProductBySlug
       categories.ts             getCategories, getCategoryBySlug
       types.ts                  Raw WooCommerce response types
       map.ts                    Map raw responses -> internal Product / Category
@@ -88,7 +90,9 @@ woo-headless/
     types.ts                    Internal domain types (Product, Category, CartItem)
     env.ts                      Validated env access (server vs public)
     logger.ts                   Structured server-side logger
-    format.ts                   Price/currency/string helpers
+    format.ts                   Price/currency/string helpers, HTML sanitizer
+    pagination.ts               Page-param parsing
+    slug.ts                     Slug validation before any API call
   tests/
     unit/                       Vitest unit tests (mappers, cart store, checkout URL)
     components/                 Vitest + Testing Library component tests
@@ -102,7 +106,7 @@ woo-headless/
   tsconfig.json
   vitest.config.ts
   playwright.config.ts
-  .eslintrc / eslint.config.mjs
+  eslint.config.mjs
   .prettierrc
   package.json
   package-lock.json
