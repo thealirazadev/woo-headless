@@ -114,7 +114,7 @@ woo-headless/
 - **Tailwind CSS** — Fast, consistent styling with a small token surface (spacing, radius, color), works well for the card/button/skeleton states defined in `design.md`, and supports dark mode via the `class` strategy.
 - **WooCommerce REST API (wc/v3)** — The store already exposes it; no extra backend to build. Read-only consumer keys keep blast radius small. See `api-contracts.md`.
 - **`next/image`** — Handles product image sizing, lazy loading, and format optimization; requires configuring the store's image host in `next.config.ts`.
-- **Zustand + `localStorage`** — Minimal client state library for the cart with a simple persistence middleware. No server session needed; the cart is inherently client-owned until checkout handoff. (React Context is an acceptable alternative if a dependency is to be avoided; Zustand is the default choice — see `rules.md` for the approval boundary.)
+- **Zustand + `localStorage`** — Minimal client state library for the cart with a simple persistence middleware. No server session needed; the cart is inherently client-owned until checkout handoff. (React Context would also work, but would need its own persistence code.)
 - **Vitest + Playwright** — Vitest for fast unit/component tests (mappers, cart math, components); one Playwright smoke test for the critical browse-to-cart flow. See `testing.md`.
 - **ESLint + Prettier** — Enforce Next/TypeScript conventions and consistent formatting.
 
