@@ -97,13 +97,28 @@ such as an old bookmark, re-fetches the last real page rather than showing an em
 uses the WooCommerce `search` parameter through a plain GET form on `/?q=`, trimmed and capped at
 100 characters, and pagination keeps the query string.
 
-## 11. Loading skeletons over a hard 404
+## 11. Real 404s with loading skeletons kept
 
-The product and category routes have `loading.tsx` skeletons. Because the skeleton starts streaming
-before the page knows the item is missing, `notFound()` renders the not-found page but the response
-has already started with status 200. Calling `notFound()` from `generateMetadata` did not change
-that. Removing the detail and category skeletons restores a real 404; the skeletons were kept for
-perceived speed, and the soft 404 is a known limitation.
+A `loading.tsx` boundary lets Next start streaming with status 200 before the page knows the item
+is missing, so `notFound()` alone only rendered the not-found page on a 200 (a soft 404; Next does
+add a `noindex` robots tag). Calling `notFound()` from `generateMetadata` did not change that. The
+fix keeps the skeletons and moves the lookup ahead of any streaming:
+
+- **Product detail** exports an empty `generateStaticParams`, so `/product/[slug]` is an on-demand
+  ISR route. Next renders an ISR page in full before responding, so a missing product returns a
+  404 status, cached and revalidated like any other ISR result (60 seconds). The skeleton can
+  still show during client-side navigation while a page is generated.
+- **Category listing** reads `?page=`, so it must stay dynamic. `app/category/[slug]/layout.tsx`
+  resolves the category before the segment's `loading.tsx` boundary, so an unknown slug throws
+  `notFound()` while the response status can still change. The skeleton then covers the product
+  fetch only.
+- **The root listing skeleton** moved to `app/(home)/loading.tsx`. A root `app/loading.tsx` wraps
+  every route, which would start streaming before the category layout runs. `/category` and
+  `/cart` no longer show the home grid skeleton, which never matched their layout anyway.
+
+`app/not-found.tsx` also declares `robots: { index: false }` so the 404 page stays out of search
+indexes independent of Next's default. The Playwright smoke test asserts the 404 status for both
+an unknown product and an unknown category.
 
 ## 12. Theme applied before first paint
 

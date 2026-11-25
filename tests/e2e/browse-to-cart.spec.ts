@@ -27,7 +27,18 @@ test('browse -> open product -> add to cart -> see cart count', async ({ page })
   expect(href).not.toContain('consumer_secret');
 });
 
-test('unknown product slug shows the 404 page', async ({ page }) => {
-  await page.goto('/product/does-not-exist');
+test('unknown product slug shows the 404 page with a 404 status', async ({ page }) => {
+  const response = await page.goto('/product/does-not-exist');
+  expect(response?.status()).toBe(404);
+  await expect(page.getByText("We couldn't find what you were looking for.")).toBeVisible();
+  await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute(
+    'content',
+    /noindex/,
+  );
+});
+
+test('unknown category slug shows the 404 page with a 404 status', async ({ page }) => {
+  const response = await page.goto('/category/does-not-exist');
+  expect(response?.status()).toBe(404);
   await expect(page.getByText("We couldn't find what you were looking for.")).toBeVisible();
 });

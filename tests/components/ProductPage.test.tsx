@@ -13,7 +13,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 import { getProductBySlug } from '@/lib/woocommerce/products';
-import ProductPage from '@/app/product/[slug]/page';
+import ProductPage, { generateStaticParams } from '@/app/product/[slug]/page';
 
 const product: Product = {
   id: 1,
@@ -55,6 +55,10 @@ describe('ProductPage', () => {
     await expect(
       ProductPage({ params: Promise.resolve({ slug: 'unknown' }) }),
     ).rejects.toThrow('NEXT_NOT_FOUND');
+  });
+
+  it('builds no paths ahead of time so each product renders on demand as ISR', () => {
+    expect(generateStaticParams()).toEqual([]);
   });
 
   it('calls notFound for a malformed slug without hitting the API', async () => {

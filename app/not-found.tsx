@@ -1,5 +1,13 @@
+import type { Metadata } from 'next';
 import type { ReactElement } from 'react';
 import { Button } from '@/components/ui/Button';
+
+// Next already adds a noindex robots tag when notFound() fires; declaring it here keeps
+// the global 404 out of search indexes even if that default changes.
+export const metadata: Metadata = {
+  title: 'Page not found',
+  robots: { index: false, follow: true },
+};
 
 /** Global 404 page. */
 export default function NotFound(): ReactElement {
