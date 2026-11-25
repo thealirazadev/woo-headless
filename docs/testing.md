@@ -16,18 +16,18 @@ Use Vitest (+ React Testing Library + jsdom for components). Cover:
 Guidelines: no live network in unit tests — mock the WooCommerce client/`fetch`. Keep component tests focused on behavior and accessibility (roles, labels), not styling.
 
 ### End-to-end — Playwright (one smoke test)
-A single Playwright smoke test for the critical path, plus a couple of unhappy-path assertions. It runs against a local dev/build server. Prefer mocking WooCommerce responses (Playwright route interception) so the test is deterministic and does not require live store credentials in CI.
+A single Playwright smoke test for the critical path, plus an unhappy-path assertion. Catalog data is fetched in server components, so browser-side route interception cannot mock it. Instead `playwright.config.ts` starts `tests/e2e/mock-store-server.mjs`, a small HTTPS mock of the WooCommerce REST API on port 8443 with a throwaway self-signed certificate, and then runs the app with `npm run build && npm run start` on port 3100 pointed at it. `NODE_TLS_REJECT_UNAUTHORIZED=0` is set only for that app server process. No live store credentials are needed.
 
 Smoke flow:
 1. Load the home listing; assert product cards render.
 2. Open a product detail page; assert name and price.
 3. Add to cart; assert the cart count badge increments.
 4. Open the cart; assert the line item and subtotal.
-5. Assert the checkout button is enabled and points at the store checkout base (do not follow the external redirect).
+5. Assert the checkout link points at the store checkout and carries no consumer key or secret (do not follow the external redirect).
 
-Unhappy paths to include as assertions (via route mocking): empty catalog shows empty state; product 404 shows the 404 page.
+Unhappy path asserted: an unknown product slug shows the not-found page.
 
-Manual QA still covers the full unhappy-path matrix in `docs/phases.md` (API down, invalid credentials, slow network, long titles) each phase; the automated e2e test guards the happy path against regressions.
+Manual QA covers the rest of the unhappy-path matrix: store down, invalid credentials, slow network (skeletons), empty catalog, and very long titles. The automated e2e test guards the happy path against regressions.
 
 ## Exact commands
 
@@ -40,6 +40,9 @@ npm run lint
 
 # Unit + component tests (Vitest, single run)
 npm run test
+
+# Same, with the coverage gate on lib/ (what CI runs)
+npm run test:coverage
 
 # Vitest watch (local dev)
 npm run test:watch
@@ -54,7 +57,7 @@ npm run build
 npm run start
 ```
 
-Expected `package.json` scripts:
+`package.json` scripts:
 
 ```
 "scripts": {
@@ -64,17 +67,27 @@ Expected `package.json` scripts:
   "lint": "next lint",
   "test": "vitest run",
   "test:watch": "vitest",
+  "test:coverage": "vitest run --coverage",
   "test:e2e": "playwright test"
 }
 ```
 
-## Definition of "tests pass" for a feature
+## CI
 
-A feature/task is done only when all of the following succeed locally:
+`.github/workflows/ci.yml` runs on every push to `main` and every pull request targeting `main`, as a matrix over Node.js 20 and 22 on Ubuntu. Placeholder `WOOCOMMERCE_*` and `NEXT_PUBLIC_STORE_NAME` values are set in the job environment because the build reads them. Steps:
 
-- `npm run lint` — no errors.
-- `npm run build` — succeeds.
-- `npm run test` — all Vitest tests pass.
-- From Phase 7 on, `npm run test:e2e` — the Playwright smoke test passes.
+1. `npm ci`
+2. `npm run lint`
+3. `npm run test:coverage` (Vitest with the coverage thresholds on `lib/`: 90% lines and statements, 85% functions, 80% branches)
+4. `npm run build`
 
-Do not commit a feature that leaves any of these failing. If a fix is not working after two attempts, stop and report (see Boundaries in `docs/rules.md`).
+The Playwright smoke test is not part of CI; run it locally.
+
+## Before merging
+
+All of the following should succeed locally:
+
+- `npm run lint`: no errors.
+- `npm run test:coverage`: all Vitest tests pass and the coverage gate holds.
+- `npm run build`: succeeds.
+- `npm run test:e2e`: the Playwright smoke test passes.

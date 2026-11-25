@@ -87,7 +87,7 @@ End-to-end smoke test (Playwright):
 npm run test:e2e
 ```
 
-Both the build and the test suite must pass before a feature is considered done. See `docs/testing.md` for details.
+Both the build and the test suite must pass before a feature is considered done. See `docs/testing.md` for details, and `docs/decisions.md` for the main design decisions and the bugs that shaped them.
 
 ## Structure
 
@@ -96,7 +96,7 @@ woo-headless/
   app/            App Router routes (listing, categories, product detail, layout)
   components/     Reusable UI (product card, cart, buttons, skeletons, states)
   lib/            WooCommerce REST client, types, cart store, utils
-  docs/           Planning and handoff documentation
+  docs/           Architecture, API contracts, design, testing, and design decisions
   tests/          Vitest and Playwright tests
   public/         Static assets
   .env.example    Environment variable template
