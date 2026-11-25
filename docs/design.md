@@ -86,7 +86,7 @@ Secondary/ghost mirror the same state matrix on their own base colors. Never rem
 
 Use `Skeleton` primitive: `surface-2` background with a subtle shimmer/pulse (`animate-pulse`), radius matching the real element. Skeletons must match the final layout footprint so there is no layout shift.
 
-- **Listing skeleton (`app/loading.tsx`):** grid of 8-12 card skeletons (image block + two text lines + price line).
+- **Listing skeleton (`app/(home)/loading.tsx`):** grid of 8-12 card skeletons (image block + two text lines + price line).
 - **Category listing skeleton:** same grid.
 - **Product detail skeleton (`app/product/[slug]/loading.tsx`):** image block (left), then title line, price line, three description lines, and a button block (right).
 - **Cart:** line-item skeletons if the cart page ever awaits data (normally instant from localStorage).

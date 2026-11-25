@@ -7,7 +7,7 @@ vi.mock('@/lib/woocommerce/products', () => ({
 }));
 
 import { getProducts } from '@/lib/woocommerce/products';
-import HomePage from '@/app/page';
+import HomePage from '@/app/(home)/page';
 
 const product: Product = {
   id: 1,

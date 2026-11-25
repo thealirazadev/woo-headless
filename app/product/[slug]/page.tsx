@@ -13,6 +13,17 @@ import { AddToCartButton } from '@/components/product/AddToCartButton';
 
 export const revalidate = 60;
 
+/**
+ * No paths are built ahead of time, but declaring the route as statically generated
+ * makes Next render each product on first request as a full ISR page instead of
+ * streaming it behind loading.tsx. A missing product then answers with a real 404
+ * status (cached like any other ISR result) rather than a 200 that only shows the
+ * not-found page.
+ */
+export function generateStaticParams(): { slug: string }[] {
+  return [];
+}
+
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
